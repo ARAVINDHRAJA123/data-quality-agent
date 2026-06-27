@@ -1,0 +1,6 @@
+anthropic
+google-genai
+google-cloud-bigquery
+flask>=3.0.0
+mcp
+pytest>=8.0.0

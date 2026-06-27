@@ -1,0 +1,9 @@
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.env
+*.pdf
+*.xlsx
+service_account.json
+CLAUDE.md

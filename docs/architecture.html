@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Data Quality Agent — Architecture</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:#fff;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#1e293b}
+.wrap{background:#fff;padding:32px 28px 28px;max-width:860px;margin:0 auto}
+.hdr{text-align:center;margin-bottom:28px}
+.hdr-t{font-size:20px;font-weight:800;color:#1e293b;letter-spacing:-.3px;margin-bottom:4px}
+.hdr-s{font-size:13px;color:#64748b}
+.card{border-radius:14px;border:2px solid;padding:16px 18px;text-align:center}
+.ey{font-size:9.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;margin-bottom:5px}
+.ct{font-size:15px;font-weight:800;margin-bottom:4px;line-height:1.2}
+.cb{font-size:11px;line-height:1.55}
+.c-red{background:#fff0f0;border-color:#f87171}
+.c-red .ey{color:#ef4444}.c-red .ct{color:#991b1b}.c-red .cb{color:#b91c1c}
+.c-agent{background:#eff6ff;border-color:#3b82f6;border-width:2.5px;padding:22px 28px}
+.c-agent .ey{color:#3b82f6}.c-agent .ct{font-size:22px;color:#1e3a8a}.c-agent .cb{color:#1d4ed8}
+.c-slate{background:#f8fafc;border-color:#94a3b8}
+.c-slate .ey{color:#64748b}.c-slate .ct{color:#1e293b;font-size:13px}.c-slate .cb{color:#475569}
+.arr-r{display:inline-flex;align-items:center;gap:0}
+.arr-r .line{height:2px;width:30px}
+.arr-r .head{width:0;height:0;border-top:6px solid transparent;border-bottom:6px solid transparent}
+.arr-r.red .line{background:#f87171}.arr-r.red .head{border-left:9px solid #f87171}
+.arr-r.slate .line{background:#94a3b8}.arr-r.slate .head{border-right:9px solid #94a3b8;border-left:none}
+.v-conn{display:flex;justify-content:center;padding:2px 0;height:28px;position:relative}
+.v-conn::before{content:'';position:absolute;top:0;left:50%;width:2px;height:20px;background:#93c5fd;border-radius:1px}
+.v-conn::after{content:'';position:absolute;top:20px;left:calc(50% - 5px);border-left:6px solid transparent;border-right:6px solid transparent;border-top:8px solid #93c5fd}
+.mid{display:grid;grid-template-columns:1fr 192px;gap:16px;align-items:start}
+.tools-wrap{border:2px dashed #93c5fd;border-radius:14px;padding:16px 14px 14px;background:#f0f7ff}
+.pan-lbl{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#3b82f6;text-align:center;margin-bottom:12px}
+.tgrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px}
+.tool{background:#fff;border:1.5px solid #bfdbfe;border-radius:9px;padding:10px 8px;text-align:center}
+.tn{font-size:10px;font-weight:700;color:#1e3a8a;margin-bottom:2px}
+.td{font-size:9.5px;color:#3b82f6;line-height:1.4}
+.tool-rep{grid-column:1/-1;background:#f0fdf4;border:2px solid #4caf7d;border-radius:9px;padding:11px 14px;text-align:center;margin-top:2px}
+.tool-rep .tn{color:#166534;font-size:11.5px}
+.tool-rep .td{color:#15803d;font-size:10.5px}
+.src-wrap{display:flex;flex-direction:column;gap:10px}
+.src-lbl{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#64748b;text-align:center;margin-bottom:2px}
+.src{border-radius:12px;border:2px solid;padding:13px 14px;text-align:center}
+.se{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}
+.sn{font-size:14px;font-weight:800;margin-bottom:2px}
+.ss{font-size:10px;line-height:1.45}
+.src-bq{background:#fffbeb;border-color:#f59e0b}
+.src-bq .se{color:#d97706}.src-bq .sn{color:#78350f}.src-bq .ss{color:#92400e}
+.src-dbt{background:#faf5ff;border-color:#a855f7}
+.src-dbt .se{color:#9333ea}.src-dbt .sn{color:#4c1d95}.src-dbt .ss{color:#6b21a8}
+.src-div{text-align:center;color:#cbd5e1;font-size:18px;line-height:1;padding:2px 0}
+.out-conn{display:flex;justify-content:center;padding:2px 0;height:28px;position:relative}
+.out-conn::before{content:'';position:absolute;top:0;left:40%;width:2px;height:20px;background:#4caf7d;border-radius:1px}
+.out-conn::after{content:'';position:absolute;top:20px;left:calc(40% - 5px);border-left:6px solid transparent;border-right:6px solid transparent;border-top:8px solid #4caf7d}
+.out-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.oc{border-radius:12px;border:2px solid #e2e8f0;background:#f8fafc;padding:16px 12px;text-align:center}
+.oi{font-size:22px;margin-bottom:7px}
+.on{font-size:12.5px;font-weight:700;color:#1e293b;margin-bottom:3px}
+.os{font-size:10.5px;color:#64748b;line-height:1.5}
+.safety{background:#f0fdf4;border:2px solid #86efac;border-radius:10px;padding:11px 18px;text-align:center;font-size:11px;color:#166534;font-weight:500;margin-top:16px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hdr">
+    <div class="hdr-t">Data Quality Agent</div>
+    <div class="hdr-s">Agentic root-cause analysis for dbt test failures</div>
+  </div>
+
+  <div style="display:flex;align-items:center;gap:0;width:100%">
+    <div class="card c-red" style="flex:0 0 200px">
+      <div class="ey">⚠️ Failure</div>
+      <div class="ct">dbt test FAILS</div>
+      <div class="cb">not_null · unique<br>accepted_values · custom</div>
+    </div>
+    <div style="display:flex;align-items:center;padding:0 6px">
+      <span class="arr-r red"><span class="line"></span><span class="head"></span></span>
+    </div>
+    <div class="card c-agent" style="flex:1">
+      <div class="ey">🤖 Agent</div>
+      <div class="ct">agent.py</div>
+      <div class="cb">Claude / Gemini · multi-step tool-use loop<br>Decides next investigation step autonomously</div>
+    </div>
+    <div style="display:flex;align-items:center;padding:0 6px">
+      <span class="arr-r slate"><span class="head"></span><span class="line"></span></span>
+    </div>
+    <div class="card c-slate" style="flex:0 0 200px">
+      <div class="ey">Trigger via</div>
+      <div class="ct">CLI · Webhook · MCP</div>
+      <div class="cb">Claude Code · OpenClaw<br>Cursor · Zed · any client</div>
+    </div>
+  </div>
+
+  <div class="v-conn"></div>
+
+  <div class="mid">
+    <div class="tools-wrap">
+      <div class="pan-lbl">Agent Tools — called autonomously in any order</div>
+      <div class="tgrid">
+        <div class="tool"><div class="tn">get_failing_rows</div><div class="td">Fetch actual bad rows from BigQuery</div></div>
+        <div class="tool"><div class="tn">get_model_lineage</div><div class="td">Upstream parents &amp; downstream children</div></div>
+        <div class="tool"><div class="tn">get_model_sql</div><div class="td">Compiled transformation SQL</div></div>
+        <div class="tool"><div class="tn">get_column_profile</div><div class="td">Null count · distinct · min · max</div></div>
+        <div class="tool"><div class="tn">run_query</div><div class="td">Custom read-only BQ investigation</div></div>
+        <div class="tool"><div class="tn">get_source_freshness</div><div class="td">Staleness of source tables</div></div>
+        <div class="tool-rep">
+          <div class="tn">✅ write_report</div>
+          <div class="td">Root cause · upstream lineage trace · recommended fix · severity</div>
+        </div>
+      </div>
+    </div>
+    <div class="src-wrap">
+      <div class="src-lbl">Data Sources</div>
+      <div class="src src-bq">
+        <div class="se">Queries</div>
+        <div class="sn">BigQuery</div>
+        <div class="ss">raw · analytics<br>Read-only</div>
+      </div>
+      <div class="src-div">↕</div>
+      <div class="src src-dbt">
+        <div class="se">Reads</div>
+        <div class="sn">manifest.json</div>
+        <div class="ss">dbt lineage graph<br>Compiled SQL · tests</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="out-conn"></div>
+
+  <div class="out-row">
+    <div class="oc"><div class="oi">📄</div><div class="on">Incident Report</div><div class="os">reports/incident_*.md<br>Root cause + fix + severity</div></div>
+    <div class="oc"><div class="oi">🔌</div><div class="on">MCP Clients</div><div class="os">Claude Code · OpenClaw<br>Cursor · Zed · any client</div></div>
+    <div class="oc"><div class="oi">🔄</div><div class="on">Airflow Webhook</div><div class="os">POST /investigate<br>Auto-triggered on failure</div></div>
+  </div>
+
+  <div class="safety">
+    🔒 All BigQuery queries are <strong>read-only</strong> (SELECT / WITH only) — DML and DDL rejected before execution
+  </div>
+</div>
+</body>
+</html>

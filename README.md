@@ -10,9 +10,7 @@ An agentic AI system that automatically investigates dbt test failures, traces t
 
 ## Architecture
 
-![Data Quality Agent Architecture](docs/architecture.html)
-
-> Full interactive diagram: [docs/architecture.html](docs/architecture.html)
+![Data Quality Agent Architecture](docs/architecture.svg)
 
 ---
 

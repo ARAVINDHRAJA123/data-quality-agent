@@ -1,6 +1,6 @@
-# dbt Incident Investigator
+# Data Quality Agent
 
-[![CI](https://github.com/ARAVINDHRAJA123/data-quality-agent/actions/workflows/ci.yml/badge.svg)](https://github.com/ARAVINDHRAJA123/data-quality-agent/actions/workflows/ci.yml)
+[![CI](https://github.com/ARAVINDHRAJA123/data-quality-agent/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/ARAVINDHRAJA123/data-quality-agent/actions/workflows/ci.yml)
 
 An agentic AI system that automatically investigates dbt test failures, traces the root cause through BigQuery lineage, and generates a plain-English incident report — cutting investigation time from hours to minutes.
 

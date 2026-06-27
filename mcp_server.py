@@ -39,7 +39,7 @@ from mcp.server.fastmcp import FastMCP
 from agent import investigate
 from tools.dbt_tools import get_failing_tests, load_manifest
 
-mcp = FastMCP("dbt-incident-investigator")
+mcp = FastMCP("data-quality-agent")
 
 MANIFEST_PATH    = os.environ.get("DBT_MANIFEST_PATH", "")
 RUN_RESULTS_PATH = os.environ.get("DBT_RUN_RESULTS_PATH", "")

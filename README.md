@@ -1,6 +1,6 @@
 # dbt Incident Investigator
 
-[![CI](https://github.com/ARAVINDHRAJA123/dbt-incident-investigator/actions/workflows/ci.yml/badge.svg)](https://github.com/ARAVINDHRAJA123/dbt-incident-investigator/actions/workflows/ci.yml)
+[![CI](https://github.com/ARAVINDHRAJA123/data-quality-agent/actions/workflows/ci.yml/badge.svg)](https://github.com/ARAVINDHRAJA123/data-quality-agent/actions/workflows/ci.yml)
 
 An agentic AI system that automatically investigates dbt test failures, traces the root cause through BigQuery lineage, and generates a plain-English incident report — cutting investigation time from hours to minutes.
 
@@ -79,7 +79,7 @@ claude mcp add -s user \
 openclaw mcp set dbt-investigator '{
   "command": "/path/to/venv/bin/python",
   "args": ["/path/to/mcp_server.py"],
-  "cwd": "/path/to/dbt-incident-investigator",
+  "cwd": "/path/to/data-quality-agent",
   "env": {
     "GCP_PROJECT": "your-project",
     "GEMINI_API_KEY": "your-key",
@@ -111,8 +111,8 @@ openclaw mcp probe   # → dbt-investigator: 3 tools ✔
 ## Setup
 
 ```bash
-git clone https://github.com/ARAVINDHRAJA123/dbt-incident-investigator.git
-cd dbt-incident-investigator
+git clone https://github.com/ARAVINDHRAJA123/data-quality-agent.git
+cd data-quality-agent
 
 python3 -m venv venv && source venv/bin/activate
 pip install -r requirements.txt
@@ -153,7 +153,7 @@ cd /path/to/dbt_project && dbt compile
 ## Project structure
 
 ```
-dbt-incident-investigator/
+data-quality-agent/
 ├── agent.py          ← agentic investigation loop (Claude + Gemini)
 ├── server.py         ← Flask webhook server
 ├── mcp_server.py     ← FastMCP server (any MCP client)

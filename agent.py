@@ -49,7 +49,7 @@ MANIFEST_PATH = os.environ.get("DBT_MANIFEST_PATH", "")
 RUN_RESULTS_PATH = os.environ.get("DBT_RUN_RESULTS_PATH", "")
 
 ANTHROPIC_MODEL = "claude-opus-4-8"
-GEMINI_MODEL    = "gemini-2.5-flash"
+GEMINI_MODEL    = "gemini-2.5-flash-lite"   # higher free-tier quota (15 req/min vs 5)
 
 
 def _get_provider() -> str:
@@ -344,13 +344,30 @@ def _run_gemini(manifest: dict, test_name: str, model: str, column: str,
         types.Part(text=f"Investigate the dbt test failure: {test_name}")
     ])]
 
+    import time
+
+    def _gemini_call(contents):
+        for attempt in range(5):
+            try:
+                return client.models.generate_content(
+                    model=model_id or GEMINI_MODEL,
+                    contents=contents,
+                    config=config,
+                )
+            except Exception as e:
+                msg = str(e)
+                retryable = "429" in msg or "503" in msg or "UNAVAILABLE" in msg or "RESOURCE_EXHAUSTED" in msg
+                if retryable and attempt < 4:
+                    wait = (attempt + 1) * 20
+                    if verbose:
+                        print(f"   [gemini {msg[:30]}…] waiting {wait}s (attempt {attempt+1}/5)…", flush=True)
+                    time.sleep(wait)
+                else:
+                    raise
+
     report_args = None
     for _ in range(12):
-        resp = client.models.generate_content(
-            model=model_id or GEMINI_MODEL,
-            contents=contents,
-            config=config,
-        )
+        resp = _gemini_call(contents)
         calls = resp.function_calls
         if not calls:
             break

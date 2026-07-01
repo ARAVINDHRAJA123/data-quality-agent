@@ -24,6 +24,8 @@ import os
 import sys
 from pathlib import Path
 
+from langfuse import observe
+
 from tools.bq_tools import (
     get_column_profile,
     get_failing_rows,
@@ -229,6 +231,7 @@ Rules:
 
 # ── Claude agent loop ─────────────────────────────────────────────────────────
 
+@observe(name="llm_loop_anthropic")
 def _run_anthropic(manifest: dict, test_name: str, model: str, column: str,
                    failing_rows: int, verbose: bool, model_id: str | None) -> dict:
     import anthropic
@@ -293,6 +296,7 @@ def _run_anthropic(manifest: dict, test_name: str, model: str, column: str,
 
 # ── Gemini agent loop ─────────────────────────────────────────────────────────
 
+@observe(name="llm_loop_gemini")
 def _run_gemini(manifest: dict, test_name: str, model: str, column: str,
                 failing_rows: int, verbose: bool, model_id: str | None) -> dict:
     from google import genai
@@ -403,6 +407,7 @@ def _run_gemini(manifest: dict, test_name: str, model: str, column: str,
 
 # ── Public interface ──────────────────────────────────────────────────────────
 
+@observe(name="dqa_investigate")
 def investigate(
     test_name: str,
     model: str,

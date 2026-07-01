@@ -114,7 +114,7 @@
   <polygon points="326,442 332,452 338,442" fill="#4caf7d"/>
   <!-- fan right -->
   <line x1="332" y1="428" x2="541" y2="450" stroke="#4caf7d" stroke-width="1.5"/>
-  <polygon points="535,440 541,452 547,440" fill="#4caf7d"/>
+  <polygon points="546,446 551,456 536,454" fill="#4caf7d"/>
 
   <!-- ── OUTPUT CARDS ── -->
   <!-- Incident Report -->

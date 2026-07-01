@@ -4,7 +4,7 @@
 
 An agentic AI system that automatically investigates dbt test failures, traces the root cause through BigQuery lineage, and generates a plain-English incident report — cutting investigation time from hours to minutes.
 
-📐 [Architecture diagram](docs/architecture.html) · 📄 [Sample incident report](docs/sample_report.md)
+📄 [Sample incident report](docs/sample_report.md)
 
 ---
 
